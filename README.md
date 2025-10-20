@@ -13,7 +13,7 @@ Os dados podem ser estáticos (mock) ou implementados via API (diferencial).
 ##
 
 Abaixo, você tem o link do protótipo a ser seguido ou para servir de inspiração.
-https://www.figma.com/design/bFHlQtFGjEnP2nmsfe8vk8/Teste-Mobile?node-id=0-1&p=f&t=cP3UdRFvB0LgZ78K-0
+https://www.figma.com/design/bFHlQtFGjEnP2nmsfe8vk8/Teste-Mobile?m=auto&t=MC6pUI9ZXeW5S9xf-1
 
 ##
 
