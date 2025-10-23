@@ -489,7 +489,7 @@ export function Home() {
                   {formatTransactionDate(transaction.date)}
                 </TransactionDate>
               </TransactionInfo>
-              <Amount color={category?.iconColor}>
+              <Amount color={isIncome ? "#16A34A" : "#DC2626"}>
                 {isIncome ? "+" : "-"}
                 {formatCurrency(Math.abs(transaction.amount), currency)}
               </Amount>
