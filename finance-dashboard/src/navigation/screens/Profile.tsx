@@ -1,18 +1,21 @@
 import { Feather } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { Fragment, useState } from "react";
-import styled from "styled-components/native";
+import styled, { DefaultTheme } from "styled-components/native";
 import { user } from "../../mock/user";
+import { useThemeContext } from "../../contexts/ThemeContext";
 
 const userImage = require("../../../assets/user.png");
 const usFlag = require("../../../assets/us.png");
 const brFlag = require("../../../assets/br.png");
 
-const Container = styled(LinearGradient).attrs({
-  colors: ["#6366F1", "#8B5CF6"],
-  start: { x: 0, y: 1 },
-  end: { x: 1, y: 1 },
-})`
+const Container = styled(LinearGradient).attrs(
+  ({ theme }: { theme: DefaultTheme }) => ({
+    colors: [theme.colors.primary, theme.colors.gradient],
+    start: { x: 0, y: 1 },
+    end: { x: 1, y: 1 },
+  })
+)`
   flex: 1;
 `;
 
@@ -34,7 +37,7 @@ const ProfileImage = styled.Image`
 
 const UserName = styled.Text`
   font-size: 20px;
-  color: #c7d2fe;
+  color: ${({ theme }: { theme: DefaultTheme }) => theme.colors.lightText};
 `;
 
 const Content = styled.ScrollView`
@@ -59,7 +62,8 @@ const SectionLabel = styled.Text`
 `;
 
 const SettingCard = styled.View`
-  background-color: #ffffff;
+  background-color: ${({ theme }: { theme: DefaultTheme }) =>
+    theme.colors.card};
   border-radius: 24px;
   padding: 8px 8px 8px 16px;
 `;
@@ -72,13 +76,14 @@ const SettingRow = styled.View`
 
 const SettingText = styled.Text`
   font-size: 14px;
-  color: #171717;
+  color: ${({ theme }: { theme: DefaultTheme }) => theme.colors.settingsText};
 `;
 
 const Switch = styled.Switch``;
 
 const CurrencyCard = styled.View`
-  background-color: #ffffff;
+  background-color: ${({ theme }: { theme: DefaultTheme }) =>
+    theme.colors.card};
   border-radius: 24px;
   padding: 16px 0;
 `;
@@ -105,7 +110,7 @@ const FlagImage = styled.Image`
 const CurrencyCode = styled.Text`
   font-size: 16px;
   font-weight: 700;
-  color: #171717;
+  color: ${({ theme }: { theme: DefaultTheme }) => theme.colors.settingsText};
 `;
 
 const Divider = styled.View`
@@ -115,6 +120,8 @@ const Divider = styled.View`
 `;
 
 export function Profile() {
+  const { isDark, toggleTheme } = useThemeContext();
+
   const [hideValues, setHideValues] = useState(false);
   const [currencies, setCurrencies] = useState([
     {
@@ -166,6 +173,21 @@ export function Profile() {
         </Section>
 
         <Section>
+          <SectionLabel>Appearance</SectionLabel>
+          <SettingCard>
+            <SettingRow>
+              <SettingText>Dark Mode</SettingText>
+              <Switch
+                value={isDark}
+                onValueChange={toggleTheme}
+                trackColor={{ false: "#E5E7EB", true: "#10B981" }}
+                thumbColor="#ffffff"
+              />
+            </SettingRow>
+          </SettingCard>
+        </Section>
+
+        <Section>
           <SectionLabel>Currency</SectionLabel>
           <CurrencyCard>
             {currencies.map((currency, index) => (
@@ -179,7 +201,11 @@ export function Profile() {
                     <CurrencyCode>{currency.code}</CurrencyCode>
                   </CurrencyFlag>
                   {currency.selected && (
-                    <Feather name="check" size={24} color="#000000" />
+                    <Feather
+                      name="check"
+                      size={24}
+                      color={!isDark ? "#000000" : "#ffffff"}
+                    />
                   )}
                 </CurrencyOption>
                 {index < currencies.length - 1 && <Divider />}

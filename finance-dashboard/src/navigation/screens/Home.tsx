@@ -1,4 +1,4 @@
-import styled, { DefaultTheme } from "styled-components/native";
+import styled, { DefaultTheme, useTheme } from "styled-components/native";
 import { Feather, FontAwesome, Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useState } from "react";
@@ -21,14 +21,16 @@ const screenWidth = Dimensions.get("window").width;
 const Container = styled.ScrollView`
   flex: 1;
   background-color: ${({ theme }: { theme: DefaultTheme }) =>
-    theme.colors.background};
+    theme.colors.secondary};
 `;
 
-const HomeHeader = styled(LinearGradient).attrs({
-  colors: ["#6366F1", "#8B5CF6"],
-  start: { x: 0, y: 1 },
-  end: { x: 1, y: 1 },
-})`
+const HomeHeader = styled(LinearGradient).attrs(
+  ({ theme }: { theme: DefaultTheme }) => ({
+    colors: [theme.colors.primary, theme.colors.gradient],
+    start: { x: 0, y: 1 },
+    end: { x: 1, y: 1 },
+  })
+)`
   padding: 10px 24px 30px 24px;
 `;
 
@@ -41,7 +43,7 @@ const GreetingText = styled.Text`
 
 const UserName = styled.Text`
   font-size: 14px;
-  color: #c7d2fe;
+  color: ${({ theme }: { theme: DefaultTheme }) => theme.colors.lightText};
   margin-bottom: 24px;
 `;
 
@@ -61,7 +63,7 @@ const BalanceTop = styled.View`
 
 const BalanceLabel = styled.Text`
   font-size: 14px;
-  color: #c7d2fe;
+  color: ${({ theme }: { theme: DefaultTheme }) => theme.colors.lightText};
 `;
 
 const BalanceAmount = styled.Text`
@@ -91,7 +93,7 @@ const AccountsContainer = styled.View`
 const Title = styled.Text`
   font-size: 18px;
   font-weight: 600;
-  color: #1f2937;
+  color: ${({ theme }: { theme: DefaultTheme }) => theme.colors.primaryText};
   margin-bottom: 16px;
 `;
 
@@ -99,9 +101,10 @@ const AccountCard = styled.View`
   height: 78px;
   flex-direction: row;
   align-items: center;
-  background-color: #ffffff;
+  background-color: ${({ theme }: { theme: DefaultTheme }) =>
+    theme.colors.card};
   padding: 17px;
-  border: 1px #f3f4f6;
+  border: 1px ${({ theme }: { theme: DefaultTheme }) => theme.colors.border};
   border-radius: 12px;
   margin-bottom: 12px;
   shadow-color: #0000000d;
@@ -132,28 +135,29 @@ const AccountInfo = styled.View`
 const AccountName = styled.Text`
   font-size: 16px;
   font-weight: 500;
-  color: #1f2937;
+  color: ${({ theme }: { theme: DefaultTheme }) => theme.colors.primaryText};
   margin-bottom: 4px;
 `;
 
 const AccountNumber = styled.Text`
   font-size: 14px;
-  color: #6b7280;
+  color: ${({ theme }: { theme: DefaultTheme }) => theme.colors.secondaryText};
 `;
 
 const Balance = styled.Text`
   font-size: 16px;
   font-weight: 600;
-  color: #1f2937;
+  color: ${({ theme }: { theme: DefaultTheme }) => theme.colors.primaryText};
 `;
 
 //Chart
 
 const IncomesExpensesContainer = styled.View`
-  background-color: #ffffff;
+  background-color: ${({ theme }: { theme: DefaultTheme }) =>
+    theme.colors.card};
   margin: 0 24px 24px;
   padding: 21px;
-  border: 1px #f3f4f6;
+  border: 1px ${({ theme }: { theme: DefaultTheme }) => theme.colors.border};
   border-radius: 12px;
   shadow-color: #0000000d;
   shadow-offset: 0px 1px;
@@ -172,7 +176,7 @@ const ChartHeader = styled.View`
 const ChartTitle = styled.Text`
   font-size: 16px;
   font-weight: 600;
-  color: #1f2937;
+  color: ${({ theme }: { theme: DefaultTheme }) => theme.colors.primaryText};
 `;
 
 const PeriodSelector = styled.TouchableOpacity`
@@ -183,7 +187,7 @@ const PeriodSelector = styled.TouchableOpacity`
 
 const PeriodText = styled.Text`
   font-size: 14px;
-  color: #4b5563;
+  color: ${({ theme }: { theme: DefaultTheme }) => theme.colors.secondaryText};
 `;
 
 const ChartContainer = styled.View`
@@ -216,7 +220,7 @@ const LegendDot = styled.View<LegendDotProps>`
 
 const LegendText = styled.Text`
   font-size: 12px;
-  color: #6b7280;
+  color: ${({ theme }: { theme: DefaultTheme }) => theme.colors.secondaryText};
 `;
 
 //Transactions
@@ -228,7 +232,7 @@ const TransctionsContainer = styled.View`
 const TransactionTitle = styled.Text`
   font-size: 18px;
   font-weight: 600;
-  color: #1f2937;
+  color: ${({ theme }: { theme: DefaultTheme }) => theme.colors.primaryText};
   margin-bottom: 16px;
 `;
 
@@ -236,9 +240,10 @@ const TransactionCard = styled.View`
   height: 78px;
   flex-direction: row;
   align-items: center;
-  background-color: #ffffff;
+  background-color: ${({ theme }: { theme: DefaultTheme }) =>
+    theme.colors.card};
   padding: 17px;
-  border: 1px #f3f4f6;
+  border: 1px ${({ theme }: { theme: DefaultTheme }) => theme.colors.border};
   border-radius: 12px;
   margin-bottom: 12px;
   shadow-color: #0000000d;
@@ -269,13 +274,13 @@ const TransactionInfo = styled.View`
 const TransactionName = styled.Text`
   font-size: 16px;
   font-weight: 500;
-  color: #1f2937;
+  color: ${({ theme }: { theme: DefaultTheme }) => theme.colors.primaryText};
   margin-bottom: 4px;
 `;
 
 const TransactionDate = styled.Text`
   font-size: 14px;
-  color: #6b7280;
+  color: ${({ theme }: { theme: DefaultTheme }) => theme.colors.secondaryText};
 `;
 
 interface AmountProps {
@@ -289,6 +294,8 @@ const Amount = styled.Text<AmountProps>`
 `;
 
 export function Home() {
+  const theme = useTheme();
+
   const [showValues, setShowValues] = useState(true);
 
   const totalBalance = getTotalBalance();
@@ -314,7 +321,7 @@ export function Home() {
             <Ionicons
               name={showValues ? "eye" : "eye-off"}
               size={20}
-              color="#C7D2FE"
+              color={theme.colors.lightText}
               onPress={toggleShowValues}
             />
           </BalanceTop>
@@ -336,13 +343,21 @@ export function Home() {
               }
               size={16}
               color={
-                growth == 0 ? "#c7d2fe" : growth > 0 ? "#86efac" : "#f87171"
+                growth == 0
+                  ? theme.colors.lightText
+                  : growth > 0
+                  ? "#86efac"
+                  : "#f87171"
               }
             />
             <GrowthText
               style={{
                 color:
-                  growth == 0 ? "#c7d2fe" : growth > 0 ? "#86efac" : "#f87171",
+                  growth == 0
+                    ? theme.colors.lightText
+                    : growth > 0
+                    ? "#86efac"
+                    : "#f87171",
               }}
             >
               {growth == 0
@@ -386,7 +401,11 @@ export function Home() {
           <ChartTitle>Income vs Expenses</ChartTitle>
           <PeriodSelector>
             <PeriodText>This M...</PeriodText>
-            <Feather name="chevron-down" size={16} color="#6B7280" />
+            <Feather
+              name="chevron-down"
+              size={16}
+              color={theme.colors.secondaryText}
+            />
           </PeriodSelector>
         </ChartHeader>
         <ChartContainer>
@@ -397,14 +416,17 @@ export function Home() {
             roundedTop
             xAxisThickness={0}
             yAxisThickness={0}
-            yAxisTextStyle={{ color: "#6B7280", fontSize: 12 }}
-            xAxisLabelTextStyle={{ color: "#6B7280", fontSize: 12 }}
+            yAxisTextStyle={{ color: theme.colors.secondaryText, fontSize: 12 }}
+            xAxisLabelTextStyle={{
+              color: theme.colors.secondaryText,
+              fontSize: 12,
+            }}
             noOfSections={2}
             maxValue={5}
             yAxisLabelSuffix="k"
             width={screenWidth * 0.63}
             height={120}
-            backgroundColor="#ffffff"
+            backgroundColor={theme.colors.card}
             showGradient={false}
             isAnimated
             showFractionalValues

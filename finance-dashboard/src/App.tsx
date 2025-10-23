@@ -2,27 +2,26 @@ import { DarkTheme, DefaultTheme } from "@react-navigation/native";
 import { createURL } from "expo-linking";
 import * as SplashScreen from "expo-splash-screen";
 import * as React from "react";
-import { useColorScheme } from "react-native";
 import { Navigation } from "./navigation";
-import { ThemeProvider } from "styled-components/native";
 import { StatusBar } from "expo-status-bar";
-import { myTheme } from "./styles/theme";
 import { LinearGradient } from "expo-linear-gradient";
 import Constants from "expo-constants";
+import { ThemeProvider, useThemeContext } from "./contexts/ThemeContext";
+import { useTheme } from "styled-components/native";
 
 SplashScreen.preventAutoHideAsync();
 
 const prefix = createURL("/");
 
-export function App() {
-  const colorScheme = useColorScheme();
-
-  const theme = colorScheme === "dark" ? DarkTheme : DefaultTheme;
+function AppContent() {
+  const theme = useTheme();
+  const { isDark } = useThemeContext();
+  const navigationTheme = isDark ? DarkTheme : DefaultTheme;
 
   return (
-    <ThemeProvider theme={myTheme}>
+    <>
       <LinearGradient
-        colors={["#6366F1", "#8B5CF6"]}
+        colors={[theme.colors.primary, theme.colors.gradient]}
         start={{ x: 0, y: 1 }}
         end={{ x: 1, y: 1 }}
         style={{
@@ -30,9 +29,9 @@ export function App() {
           width: "100%",
         }}
       />
-      <StatusBar style="light" />
+      <StatusBar style={"light"} />
       <Navigation
-        theme={theme}
+        theme={navigationTheme}
         linking={{
           enabled: "auto",
           prefixes: [prefix],
@@ -41,6 +40,14 @@ export function App() {
           SplashScreen.hideAsync();
         }}
       />
+    </>
+  );
+}
+
+export function App() {
+  return (
+    <ThemeProvider>
+      <AppContent />
     </ThemeProvider>
   );
 }

@@ -4,7 +4,14 @@ declare module "styled-components" {
   export interface DefaultTheme {
     colors: {
       primary: string;
-      background: string;
+      secondary: string;
+      gradient: string;
+      card: string;
+      border: string;
+      primaryText: string;
+      secondaryText: string;
+      lightText: string;
+      settingsText: string;
     };
   }
 }
