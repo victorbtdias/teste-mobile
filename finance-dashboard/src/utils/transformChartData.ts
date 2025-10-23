@@ -1,6 +1,6 @@
 import { MonthlyFinance } from "./calculateMonthlyFinances";
 
-interface ChartItem {
+export interface ChartItem {
   value: number;
   label?: string;
   labelWidth?: number;
