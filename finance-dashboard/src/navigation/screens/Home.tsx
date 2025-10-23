@@ -15,6 +15,7 @@ import { getRecentTransactions } from "../../utils/getRecentTransactions";
 import { categories } from "../../mock/categories";
 import { calculateBalanceGrowth } from "../../utils/calculateBalanceGrowth";
 import { getGreeting } from "../../utils/getGreeting";
+import { useValuesVisibility } from "../../contexts/ValuesVisibilityContext";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -295,8 +296,7 @@ const Amount = styled.Text<AmountProps>`
 
 export function Home() {
   const theme = useTheme();
-
-  const [showValues, setShowValues] = useState(true);
+  const { showValues, toggleValuesVisibility } = useValuesVisibility();
 
   const totalBalance = getTotalBalance();
   const accounts = getAccountBalances();
@@ -305,10 +305,6 @@ export function Home() {
   const recentTransactions = getRecentTransactions();
   const growth = calculateBalanceGrowth();
   const greeting = getGreeting();
-
-  const toggleShowValues = () => {
-    setShowValues((prev) => !prev);
-  };
 
   return (
     <Container>
@@ -322,7 +318,7 @@ export function Home() {
               name={showValues ? "eye" : "eye-off"}
               size={20}
               color={theme.colors.lightText}
-              onPress={toggleShowValues}
+              onPress={toggleValuesVisibility}
             />
           </BalanceTop>
           <BalanceAmount>

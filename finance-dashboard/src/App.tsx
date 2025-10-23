@@ -8,6 +8,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import Constants from "expo-constants";
 import { ThemeProvider, useThemeContext } from "./contexts/ThemeContext";
 import { useTheme } from "styled-components/native";
+import { ValuesVisibilityProvider } from "./contexts/ValuesVisibilityContext";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -47,7 +48,9 @@ function AppContent() {
 export function App() {
   return (
     <ThemeProvider>
-      <AppContent />
+      <ValuesVisibilityProvider>
+        <AppContent />
+      </ValuesVisibilityProvider>
     </ThemeProvider>
   );
 }

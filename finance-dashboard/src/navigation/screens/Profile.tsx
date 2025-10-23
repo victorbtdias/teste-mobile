@@ -4,6 +4,7 @@ import { Fragment, useState } from "react";
 import styled, { DefaultTheme } from "styled-components/native";
 import { user } from "../../mock/user";
 import { useThemeContext } from "../../contexts/ThemeContext";
+import { useValuesVisibility } from "../../contexts/ValuesVisibilityContext";
 
 const userImage = require("../../../assets/user.png");
 const usFlag = require("../../../assets/us.png");
@@ -121,8 +122,8 @@ const Divider = styled.View`
 
 export function Profile() {
   const { isDark, toggleTheme } = useThemeContext();
+  const { showValues, toggleValuesVisibility } = useValuesVisibility();
 
-  const [hideValues, setHideValues] = useState(false);
   const [currencies, setCurrencies] = useState([
     {
       code: "USD",
@@ -163,8 +164,8 @@ export function Profile() {
             <SettingRow>
               <SettingText>Hide values by default</SettingText>
               <Switch
-                value={hideValues}
-                onValueChange={setHideValues}
+                value={!showValues}
+                onValueChange={toggleValuesVisibility}
                 trackColor={{ false: "#E5E7EB", true: "#10B981" }}
                 thumbColor="#ffffff"
               />
