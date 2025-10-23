@@ -5,6 +5,7 @@ import styled, { DefaultTheme } from "styled-components/native";
 import { user } from "../../mock/user";
 import { useThemeContext } from "../../contexts/ThemeContext";
 import { useValuesVisibility } from "../../contexts/ValuesVisibilityContext";
+import { useCurrency } from "../../contexts/CurrencyContext";
 
 const userImage = require("../../../assets/user.png");
 const usFlag = require("../../../assets/us.png");
@@ -123,28 +124,12 @@ const Divider = styled.View`
 export function Profile() {
   const { isDark, toggleTheme } = useThemeContext();
   const { showValues, toggleValuesVisibility } = useValuesVisibility();
+  const { currency, toggleCurrency } = useCurrency();
 
-  const [currencies, setCurrencies] = useState([
-    {
-      code: "USD",
-      flagUrl: usFlag,
-      selected: true,
-    },
-    {
-      code: "BRL",
-      flagUrl: brFlag,
-      selected: false,
-    },
-  ]);
-
-  const handleCurrencySelect = (code: string) => {
-    setCurrencies(
-      currencies.map((currency) => ({
-        ...currency,
-        selected: currency.code === code,
-      }))
-    );
-  };
+  const currencies = [
+    { code: "USD", flagUrl: usFlag },
+    { code: "BRL", flagUrl: brFlag },
+  ];
 
   return (
     <Container>
@@ -191,17 +176,17 @@ export function Profile() {
         <Section>
           <SectionLabel>Currency</SectionLabel>
           <CurrencyCard>
-            {currencies.map((currency, index) => (
-              <Fragment key={currency.code}>
+            {currencies.map((item, index) => (
+              <Fragment key={item.code}>
                 <CurrencyOption
-                  onPress={() => handleCurrencySelect(currency.code)}
+                  onPress={() => currency !== item.code && toggleCurrency()}
                   activeOpacity={0.7}
                 >
                   <CurrencyFlag>
-                    <FlagImage source={currency.flagUrl} />
-                    <CurrencyCode>{currency.code}</CurrencyCode>
+                    <FlagImage source={item.flagUrl} />
+                    <CurrencyCode>{item.code}</CurrencyCode>
                   </CurrencyFlag>
-                  {currency.selected && (
+                  {currency === item.code && (
                     <Feather
                       name="check"
                       size={24}

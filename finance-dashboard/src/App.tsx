@@ -9,6 +9,7 @@ import Constants from "expo-constants";
 import { ThemeProvider, useThemeContext } from "./contexts/ThemeContext";
 import { useTheme } from "styled-components/native";
 import { ValuesVisibilityProvider } from "./contexts/ValuesVisibilityContext";
+import { CurrencyProvider } from "./contexts/CurrencyContext";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -49,7 +50,9 @@ export function App() {
   return (
     <ThemeProvider>
       <ValuesVisibilityProvider>
-        <AppContent />
+        <CurrencyProvider>
+          <AppContent />
+        </CurrencyProvider>
       </ValuesVisibilityProvider>
     </ThemeProvider>
   );

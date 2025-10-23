@@ -1,7 +1,6 @@
 import styled, { DefaultTheme, useTheme } from "styled-components/native";
 import { Feather, FontAwesome, Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import { useState } from "react";
 import { BarChart } from "react-native-gifted-charts";
 import { Dimensions } from "react-native";
 import { formatTransactionDate } from "../../utils/formatDate";
@@ -16,6 +15,8 @@ import { categories } from "../../mock/categories";
 import { calculateBalanceGrowth } from "../../utils/calculateBalanceGrowth";
 import { getGreeting } from "../../utils/getGreeting";
 import { useValuesVisibility } from "../../contexts/ValuesVisibilityContext";
+import { useCurrency } from "../../contexts/CurrencyContext";
+import { formatCurrency } from "../../utils/formatCurrency";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -297,14 +298,19 @@ const Amount = styled.Text<AmountProps>`
 export function Home() {
   const theme = useTheme();
   const { showValues, toggleValuesVisibility } = useValuesVisibility();
+  const { currency } = useCurrency();
 
   const totalBalance = getTotalBalance();
   const accounts = getAccountBalances();
-  const monthlyFinances = calculateMonthlyFinances();
+  const monthlyFinances = calculateMonthlyFinances(currency);
   const chartData = transformChartData(monthlyFinances);
   const recentTransactions = getRecentTransactions();
   const growth = calculateBalanceGrowth();
   const greeting = getGreeting();
+
+  const maxTransactionValue = Math.max(
+    ...monthlyFinances.map((item) => Math.max(item.income, item.expense))
+  );
 
   return (
     <Container>
@@ -322,11 +328,9 @@ export function Home() {
             />
           </BalanceTop>
           <BalanceAmount>
-            {showValues
-              ? `$${totalBalance.toLocaleString("en-US", {
-                  minimumFractionDigits: 2,
-                })}`
-              : "••••••"}
+            <BalanceAmount>
+              {showValues ? formatCurrency(totalBalance, currency) : "••••••"}
+            </BalanceAmount>
           </BalanceAmount>
           <GrowthContainer>
             <Ionicons
@@ -383,10 +387,8 @@ export function Home() {
               <AccountNumber>{account.accountNumber}</AccountNumber>
             </AccountInfo>
             <Balance>
-              $
-              {account.balance.toLocaleString("en-US", {
-                minimumFractionDigits: 2,
-              })}
+              {account.balance < 0 && "-"}
+              {formatCurrency(Math.abs(account.balance), currency)}
             </Balance>
           </AccountCard>
         ))}
@@ -418,7 +420,7 @@ export function Home() {
               fontSize: 12,
             }}
             noOfSections={2}
-            maxValue={5}
+            maxValue={Math.ceil(maxTransactionValue / 1000)}
             yAxisLabelSuffix="k"
             width={screenWidth * 0.63}
             height={120}
@@ -473,10 +475,8 @@ export function Home() {
                 </TransactionDate>
               </TransactionInfo>
               <Amount color={category?.iconColor}>
-                {isIncome ? "+" : "-"}$
-                {Math.abs(transaction.amount).toLocaleString("en-US", {
-                  minimumFractionDigits: 2,
-                })}
+                {isIncome ? "+" : "-"}
+                {formatCurrency(Math.abs(transaction.amount), currency)}
               </Amount>
             </TransactionCard>
           );

@@ -7,7 +7,11 @@ export interface MonthlyFinance {
   expense: number;
 }
 
-export function calculateMonthlyFinances(): MonthlyFinance[] {
+const USD_TO_BRL = 5.39; //Foi considerado a cotação do dólar no dia 23/10. Em um caso real, eu utilizaria uma api para conversão de moedas.
+
+export function calculateMonthlyFinances(
+  currency: "USD" | "BRL"
+): MonthlyFinance[] {
   const grouped: Record<string, { income: number; expense: number }> = {};
 
   transactions.forEach((transaction) => {
@@ -26,9 +30,12 @@ export function calculateMonthlyFinances(): MonthlyFinance[] {
     }
   });
 
-  return Object.entries(grouped).map(([month, { income, expense }]) => ({
-    month,
-    income,
-    expense,
-  }));
+  return Object.entries(grouped).map(([month, { income, expense }]) => {
+    const rate = currency === "BRL" ? USD_TO_BRL : 1;
+    return {
+      month,
+      income: income * rate,
+      expense: expense * rate,
+    };
+  });
 }
