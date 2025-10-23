@@ -2,9 +2,9 @@ import { DefaultTheme } from "styled-components/native";
 
 const darkTheme: DefaultTheme = {
   colors: {
-    primary: "#6366F1",
+    primary: "#626262ff",
     secondary: "#121212",
-    gradient: "#8B5CF6",
+    gradient: "#28203cff",
     card: "#1f1f1fff",
     border: "transparent",
     primaryText: "#FFFFFF",

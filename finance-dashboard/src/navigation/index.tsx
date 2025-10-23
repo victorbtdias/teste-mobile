@@ -8,11 +8,13 @@ import { Home } from "./screens/Home";
 import { Profile } from "./screens/Profile";
 import { Entypo, Ionicons } from "@expo/vector-icons";
 import { useTheme } from "styled-components/native";
+import { useThemeContext } from "../contexts/ThemeContext";
 
 const Tab = createBottomTabNavigator();
 
 function TabNavigator() {
   const theme = useTheme();
+  const { isDark } = useThemeContext();
 
   return (
     <Tab.Navigator
@@ -35,8 +37,8 @@ function TabNavigator() {
           lineHeight: 16,
           fontWeight: 400,
         },
-        tabBarActiveTintColor: theme.colors.primary,
-        tabBarInactiveTintColor: "#9CA3AF",
+        tabBarActiveTintColor: !isDark ? theme.colors.primary : "#9CA3AF",
+        tabBarInactiveTintColor: !isDark ? "#9CA3AF" : theme.colors.primary,
         headerShown: false,
         tabBarShowLabel: true,
       }}
