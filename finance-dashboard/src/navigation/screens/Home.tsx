@@ -17,6 +17,7 @@ import { getGreeting } from "../../utils/getGreeting";
 import { useValuesVisibility } from "../../contexts/ValuesVisibilityContext";
 import { useCurrency } from "../../contexts/CurrencyContext";
 import { formatCurrency } from "../../utils/formatCurrency";
+import { useMemo } from "react";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -300,17 +301,31 @@ export function Home() {
   const { showValues, toggleValuesVisibility } = useValuesVisibility();
   const { currency } = useCurrency();
 
-  const totalBalance = getTotalBalance();
-  const accounts = getAccountBalances();
-  const monthlyFinances = calculateMonthlyFinances(currency);
-  const chartData = transformChartData(monthlyFinances);
+  const totalBalance = useMemo(() => getTotalBalance(), []);
+
+  const accounts = useMemo(() => getAccountBalances(), []);
+
+  const monthlyFinances = useMemo(
+    () => calculateMonthlyFinances(currency),
+    [currency]
+  );
+
+  const chartData = useMemo(
+    () => transformChartData(monthlyFinances),
+    [monthlyFinances]
+  );
+
   const recentTransactions = getRecentTransactions();
-  const growth = calculateBalanceGrowth();
+
+  const growth = useMemo(() => calculateBalanceGrowth(), []);
+
   const greeting = getGreeting();
 
-  const maxTransactionValue = Math.max(
-    ...monthlyFinances.map((item) => Math.max(item.income, item.expense))
-  );
+  const maxTransactionValue = useMemo(() => {
+    return Math.max(
+      ...monthlyFinances.map((item) => Math.max(item.income, item.expense))
+    );
+  }, [monthlyFinances]);
 
   return (
     <Container>
