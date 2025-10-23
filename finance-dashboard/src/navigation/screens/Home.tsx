@@ -1,17 +1,469 @@
-import styled from "styled-components/native";
+import styled, { DefaultTheme } from "styled-components/native";
+import { Feather, FontAwesome, Ionicons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
+import { useState } from "react";
+import { BarChart } from "react-native-gifted-charts";
+import { Dimensions } from "react-native";
+import { formatTransactionDate } from "../../utils/formatDate";
+import { calculateMonthlyFinances } from "../../utils/calculateMonthlyFinances";
+import { transformChartData } from "../../utils/transformChartData";
+import {
+  getTotalBalance,
+  getAccountBalances,
+} from "../../utils/calculateAccountBalance";
+import { getRecentTransactions } from "../../utils/getRecentTransactions";
+import { categories } from "../../mock/categories";
+import { calculateBalanceGrowth } from "../../utils/calculateBalanceGrowth";
+import { getGreeting } from "../../utils/getGreeting";
+
+const screenWidth = Dimensions.get("window").width;
 
 const Container = styled.ScrollView`
   flex: 1;
+  background-color: ${({ theme }: { theme: DefaultTheme }) =>
+    theme.colors.background};
 `;
 
-const Text = styled.Text`
+const HomeHeader = styled(LinearGradient).attrs({
+  colors: ["#6366F1", "#8B5CF6"],
+  start: { x: 0, y: 1 },
+  end: { x: 1, y: 1 },
+})`
+  padding: 10px 24px 30px 24px;
+`;
+
+const GreetingText = styled.Text`
+  font-size: 20px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 4px;
+`;
+
+const UserName = styled.Text`
   font-size: 14px;
+  color: #c7d2fe;
+  margin-bottom: 24px;
+`;
+
+const BalanceCard = styled.View`
+  background-color: #ffffff33;
+  border-radius: 16px;
+  padding: 20px;
+  height: 136px;
+`;
+
+const BalanceTop = styled.View`
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+`;
+
+const BalanceLabel = styled.Text`
+  font-size: 14px;
+  color: #c7d2fe;
+`;
+
+const BalanceAmount = styled.Text`
+  font-size: 30px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 4px;
+`;
+
+const GrowthContainer = styled.View`
+  flex-direction: row;
+  align-items: center;
+`;
+
+const GrowthText = styled.Text`
+  font-size: 14px;
+  color: #86efac;
+  margin-left: 4px;
+`;
+
+//Accounts
+
+const AccountsContainer = styled.View`
+  padding: 24px;
+`;
+
+const Title = styled.Text`
+  font-size: 18px;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 16px;
+`;
+
+const AccountCard = styled.View`
+  height: 78px;
+  flex-direction: row;
+  align-items: center;
+  background-color: #ffffff;
+  padding: 17px;
+  border: 1px #f3f4f6;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  shadow-color: #0000000d;
+  shadow-offset: 0px 1px;
+  shadow-opacity: 1;
+  shadow-radius: 2px;
+  elevation: 2;
+`;
+
+interface IconProps {
+  bgColor: string;
+}
+
+const IconContainer = styled.View<IconProps>`
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background-color: ${({ bgColor }: IconProps) => bgColor};
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+`;
+
+const AccountInfo = styled.View`
+  flex: 1;
+`;
+
+const AccountName = styled.Text`
+  font-size: 16px;
+  font-weight: 500;
+  color: #1f2937;
+  margin-bottom: 4px;
+`;
+
+const AccountNumber = styled.Text`
+  font-size: 14px;
+  color: #6b7280;
+`;
+
+const Balance = styled.Text`
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f2937;
+`;
+
+//Chart
+
+const IncomesExpensesContainer = styled.View`
+  background-color: #ffffff;
+  margin: 0 24px 24px;
+  padding: 21px;
+  border: 1px #f3f4f6;
+  border-radius: 12px;
+  shadow-color: #0000000d;
+  shadow-offset: 0px 1px;
+  shadow-opacity: 1;
+  shadow-radius: 2px;
+  elevation: 2;
+`;
+
+const ChartHeader = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+`;
+
+const ChartTitle = styled.Text`
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f2937;
+`;
+
+const PeriodSelector = styled.TouchableOpacity`
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+`;
+
+const PeriodText = styled.Text`
+  font-size: 14px;
+  color: #4b5563;
+`;
+
+const ChartContainer = styled.View`
+  padding-left: 10px;
+`;
+
+const Legend = styled.View`
+  flex-direction: row;
+  justify-content: center;
+  gap: 24px;
+  margin-top: 16px;
+`;
+
+const LegendItem = styled.View`
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+`;
+
+interface LegendDotProps {
+  color: string;
+}
+
+const LegendDot = styled.View<LegendDotProps>`
+  width: 12px;
+  height: 12px;
+  border-radius: 6px;
+  background-color: ${({ color }: LegendDotProps) => color};
+`;
+
+const LegendText = styled.Text`
+  font-size: 12px;
+  color: #6b7280;
+`;
+
+//Transactions
+
+const TransctionsContainer = styled.View`
+  padding: 0 24px;
+`;
+
+const TransactionTitle = styled.Text`
+  font-size: 18px;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 16px;
+`;
+
+const TransactionCard = styled.View`
+  height: 78px;
+  flex-direction: row;
+  align-items: center;
+  background-color: #ffffff;
+  padding: 17px;
+  border: 1px #f3f4f6;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  shadow-color: #0000000d;
+  shadow-offset: 0px 1px;
+  shadow-opacity: 1;
+  shadow-radius: 2px;
+  elevation: 2;
+`;
+
+interface IconProps {
+  bgColor: string;
+}
+
+const TransactionIconContainer = styled.View<IconProps>`
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background-color: ${({ bgColor }: IconProps) => bgColor};
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+`;
+
+const TransactionInfo = styled.View`
+  flex: 1;
+`;
+
+const TransactionName = styled.Text`
+  font-size: 16px;
+  font-weight: 500;
+  color: #1f2937;
+  margin-bottom: 4px;
+`;
+
+const TransactionDate = styled.Text`
+  font-size: 14px;
+  color: #6b7280;
+`;
+
+interface AmountProps {
+  color: string;
+}
+
+const Amount = styled.Text<AmountProps>`
+  font-size: 16px;
+  font-weight: 600;
+  color: ${({ color }: AmountProps) => color};
 `;
 
 export function Home() {
+  const [showValues, setShowValues] = useState(true);
+
+  const totalBalance = getTotalBalance();
+  const accounts = getAccountBalances();
+  const monthlyFinances = calculateMonthlyFinances();
+  const chartData = transformChartData(monthlyFinances);
+  const recentTransactions = getRecentTransactions();
+  const growth = calculateBalanceGrowth();
+  const greeting = getGreeting();
+
+  const toggleShowValues = () => {
+    setShowValues((prev) => !prev);
+  };
+
   return (
     <Container>
-      <Text>Home Screen</Text>
+      <HomeHeader>
+        <GreetingText>{greeting}</GreetingText>
+        <UserName>Sarah Johnson</UserName>
+        <BalanceCard>
+          <BalanceTop>
+            <BalanceLabel>Total Balance</BalanceLabel>
+            <Ionicons
+              name={showValues ? "eye" : "eye-off"}
+              size={20}
+              color="#C7D2FE"
+              onPress={toggleShowValues}
+            />
+          </BalanceTop>
+          <BalanceAmount>
+            {showValues
+              ? `$${totalBalance.toLocaleString("en-US", {
+                  minimumFractionDigits: 2,
+                })}`
+              : "••••••"}
+          </BalanceAmount>
+          <GrowthContainer>
+            <Ionicons
+              name={
+                growth == 0
+                  ? "remove-sharp"
+                  : growth > 0
+                  ? "arrow-up"
+                  : "arrow-down"
+              }
+              size={16}
+              color={
+                growth == 0 ? "#c7d2fe" : growth > 0 ? "#86efac" : "#f87171"
+              }
+            />
+            <GrowthText
+              style={{
+                color:
+                  growth == 0 ? "#c7d2fe" : growth > 0 ? "#86efac" : "#f87171",
+              }}
+            >
+              {growth == 0
+                ? "0%"
+                : growth > 0
+                ? `+${growth.toFixed(1)}%`
+                : `${growth.toFixed(1)}%`}{" "}
+              from last month
+            </GrowthText>
+          </GrowthContainer>
+        </BalanceCard>
+      </HomeHeader>
+
+      <AccountsContainer>
+        <Title>Accounts</Title>
+        {accounts.map((account) => (
+          <AccountCard key={account.id}>
+            <IconContainer bgColor={account.iconBg}>
+              <FontAwesome
+                name={account.icon}
+                size={16}
+                color={account.iconColor}
+              />
+            </IconContainer>
+            <AccountInfo>
+              <AccountName>{account.name}</AccountName>
+              <AccountNumber>{account.accountNumber}</AccountNumber>
+            </AccountInfo>
+            <Balance>
+              $
+              {account.balance.toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+              })}
+            </Balance>
+          </AccountCard>
+        ))}
+      </AccountsContainer>
+
+      <IncomesExpensesContainer>
+        <ChartHeader>
+          <ChartTitle>Income vs Expenses</ChartTitle>
+          <PeriodSelector>
+            <PeriodText>This M...</PeriodText>
+            <Feather name="chevron-down" size={16} color="#6B7280" />
+          </PeriodSelector>
+        </ChartHeader>
+        <ChartContainer>
+          <BarChart
+            data={chartData}
+            barWidth={12}
+            spacing={14}
+            roundedTop
+            xAxisThickness={0}
+            yAxisThickness={0}
+            yAxisTextStyle={{ color: "#6B7280", fontSize: 12 }}
+            xAxisLabelTextStyle={{ color: "#6B7280", fontSize: 12 }}
+            noOfSections={2}
+            maxValue={5}
+            yAxisLabelSuffix="k"
+            width={screenWidth * 0.63}
+            height={120}
+            backgroundColor="#ffffff"
+            showGradient={false}
+            isAnimated
+            showFractionalValues
+            rulesType="solid"
+            rulesColor="#bcc0c85c"
+            rulesThickness={1}
+            initialSpacing={10}
+            endSpacing={10}
+          />
+        </ChartContainer>
+        <Legend>
+          <LegendItem>
+            <LegendDot color="#10B981" />
+            <LegendText>Income</LegendText>
+          </LegendItem>
+          <LegendItem>
+            <LegendDot color="#EF4444" />
+            <LegendText>Expenses</LegendText>
+          </LegendItem>
+        </Legend>
+      </IncomesExpensesContainer>
+
+      <TransctionsContainer>
+        <TransactionTitle>Recent Transactions</TransactionTitle>
+
+        {recentTransactions.map((transaction) => {
+          const category = categories.find(
+            (c) => c.id === transaction.categoryId
+          );
+
+          if (!category) return null;
+
+          const isIncome = category?.type === "income";
+
+          return (
+            <TransactionCard key={transaction.id}>
+              <TransactionIconContainer bgColor={category.iconBg}>
+                <FontAwesome
+                  name={category.icon}
+                  size={16}
+                  color={category.iconColor}
+                />
+              </TransactionIconContainer>
+              <TransactionInfo>
+                <TransactionName>{transaction.description}</TransactionName>
+                <TransactionDate>
+                  {formatTransactionDate(transaction.date)}
+                </TransactionDate>
+              </TransactionInfo>
+              <Amount color={category?.iconColor}>
+                {isIncome ? "+" : "-"}$
+                {Math.abs(transaction.amount).toLocaleString("en-US", {
+                  minimumFractionDigits: 2,
+                })}
+              </Amount>
+            </TransactionCard>
+          );
+        })}
+      </TransctionsContainer>
     </Container>
   );
 }

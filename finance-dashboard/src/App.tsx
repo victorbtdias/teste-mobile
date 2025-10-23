@@ -7,6 +7,8 @@ import { Navigation } from "./navigation";
 import { ThemeProvider } from "styled-components/native";
 import { StatusBar } from "expo-status-bar";
 import { myTheme } from "./styles/theme";
+import { LinearGradient } from "expo-linear-gradient";
+import Constants from "expo-constants";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -19,7 +21,16 @@ export function App() {
 
   return (
     <ThemeProvider theme={myTheme}>
-      <StatusBar style="auto" />
+      <LinearGradient
+        colors={["#6366F1", "#8B5CF6"]}
+        start={{ x: 0, y: 1 }}
+        end={{ x: 1, y: 1 }}
+        style={{
+          height: Constants.statusBarHeight,
+          width: "100%",
+        }}
+      />
+      <StatusBar style="light" />
       <Navigation
         theme={theme}
         linking={{
