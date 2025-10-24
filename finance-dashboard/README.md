@@ -1,65 +1,55 @@
-# Starter Template with React Navigation
+# Dashboard de finanças
 
-This is a minimal starter template for React Native apps using Expo and React Navigation.
+Aplicativo mobile de finanças pessoais desenvolvido com React Native (Expo) para gerenciamento de contas, transações, e acompanhamento visual de entradas e saídas. Inclui modo escuro/claro, controle de visibilidade de valores, alternância de moeda (Real / Dólar), cadastro de transaçãoes (para utilizar o gerenciador de formulários Formik) e integração com Firebase Firestore para persistência dos dados.
 
-It includes the following:
+## Funcionalidades
 
-- Example [Native Stack](https://reactnavigation.org/docs/native-stack-navigator) with a nested [Bottom Tab](https://reactnavigation.org/docs/bottom-tab-navigator)
-- Web support with [React Native for Web](https://necolas.github.io/react-native-web/)
-- TypeScript support and configured for React Navigation
-- Automatic [deep link](https://reactnavigation.org/docs/deep-linking) and [URL handling configuration](https://reactnavigation.org/docs/configuring-links)
-- Theme support [based on system appearance](https://reactnavigation.org/docs/themes/#using-the-operating-system-preferences)
-- Expo [Development Build](https://docs.expo.dev/develop/development-builds/introduction/) with [Continuous Native Generation](https://docs.expo.dev/workflow/continuous-native-generation/)
+### Home (Dashboard)
 
-## Getting Started
+- Exibe saldo total com opção de esconder/mostrar valores
+- Lista de contas
+- Gráfico de entradas e saídas mensais
+- Transações recentes
+- Atualização via pull-to-refresh
 
-1. Create a new project using this template:
+### Profile
 
-   ```sh
-   npx create-expo-app@latest --template react-navigation/template
-   ```
+- Mostra foto e nome do usuário
+- Controle de visibilidade dos valores
+- Alternância entre modo claro e escuro
+- Alternância de moeda (BRL ↔ USD)
 
-2. Edit the `app.json` file to configure the `name`, `slug`, `scheme` and bundle identifiers (`ios.bundleIdentifier` and `android.bundleIdentifier`) for your app.
+### Cadastro de Transações
 
-3. Edit the `src/App.tsx` file to start working on your app.
+- Formulário validado com Formik + Yup
+- Seleção de categoria e conta em modais personalizados
 
-## Running the app
+## Tecnologias
 
-- Install the dependencies:
+Esse app foi iniciado com o template do react-navigation (npx create-expo-app@latest --template react-navigation/template)
+
+- [React Native](https://reactnative.dev/)
+- [Expo](https://expo.dev/)
+- [Styled components](https://styled-components.com)
+- [Formik](https://formik.org)
+- [Yup](https://github.com/jquense/yup)
+- [Firebase](https://firebase.google.com/)
+- [React Navigation V7](https://reactnavigation.org)
+- [Gifted Charts](https://gifted-charts.web.app/)
+- [AsyncStorage](https://react-native-async-storage.github.io/async-storage/)
+
+## Execução
+
+- Instale as dependências:
 
   ```sh
   npm install
   ```
 
-- Start the development server:
+- Execute a aplicação:
 
   ```sh
-  npm start
+  npx expo start
   ```
 
-- Build and run iOS and Android development builds:
-
-  ```sh
-  npm run ios
-  # or
-  npm run android
-  ```
-
-- In the terminal running the development server, press `i` to open the iOS simulator, `a` to open the Android device or emulator, or `w` to open the web browser.
-
-## Notes
-
-This project uses a [development build](https://docs.expo.dev/develop/development-builds/introduction/) and cannot be run with [Expo Go](https://expo.dev/go). To run the app with Expo Go, edit the `package.json` file, remove the `expo-dev-client` package and `--dev-client` flag from the `start` script.
-
-We highly recommend using the development builds for normal development and testing.
-
-The `ios` and `android` folder are gitignored in the project by default as they are automatically generated during the build process ([Continuous Native Generation](https://docs.expo.dev/workflow/continuous-native-generation/)). This means that you should not edit these folders directly and use [config plugins](https://docs.expo.dev/config-plugins/) instead. However, if you need to edit these folders, you can remove them from the `.gitignore` file so that they are tracked by git.
-
-## Resources
-
-- [React Navigation documentation](https://reactnavigation.org/)
-- [Expo documentation](https://docs.expo.dev/)
-
----
-
-Demo assets are from [lucide.dev](https://lucide.dev/)
+- No terminal, pressione `i` para abrir no emulador do iOS ou `a` para abrir no emulador de Android. Também é possível acessar no seu dispositivo físico, baixando o Expo Go e lendo o QRCode exibido no terminal.
