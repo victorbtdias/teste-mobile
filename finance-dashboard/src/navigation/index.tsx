@@ -32,11 +32,10 @@ function TabNavigator() {
           paddingRight: 100,
         },
         tabBarItemStyle: {
-          height: 24,
+          height: 34,
         },
         tabBarLabelStyle: {
           fontSize: 12,
-          lineHeight: 16,
           fontWeight: 400,
         },
         tabBarActiveTintColor: !isDark ? theme.colors.primary : "#9CA3AF",
