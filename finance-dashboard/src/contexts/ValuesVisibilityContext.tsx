@@ -28,14 +28,14 @@ export const ValuesVisibilityProvider: React.FC<{
           setShowValues(value === "true");
         }
       } catch (error) {
-        console.error("Erro ao carregar showValues:", error);
+        console.error("Error loading showValues:", error);
       }
     })();
   }, []);
 
   useEffect(() => {
     AsyncStorage.setItem("showValues", String(showValues)).catch((error) =>
-      console.error("Erro ao salvar preferência de visibilidade:", error)
+      console.error("Error saving visibility preference:", error)
     );
   }, [showValues]);
 

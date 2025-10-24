@@ -14,7 +14,7 @@ export const categoryService = {
 
       return categories;
     } catch (error) {
-      console.error("Erro ao buscar categorias:", error);
+      console.error("Error fetching categories:", error);
       throw error;
     }
   },

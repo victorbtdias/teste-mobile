@@ -14,7 +14,7 @@ export const accountService = {
 
       return accounts;
     } catch (error) {
-      console.error("Erro ao buscar contas:", error);
+      console.error("Error fetching accounts:", error);
       throw error;
     }
   },

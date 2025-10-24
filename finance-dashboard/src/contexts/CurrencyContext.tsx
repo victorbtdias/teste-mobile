@@ -27,14 +27,14 @@ export const CurrencyProvider: React.FC<{ children: React.ReactNode }> = ({
           setCurrency(storedCurrency);
         }
       } catch (error) {
-        console.error("Erro ao carregar moeda:", error);
+        console.error("Error loading currency:", error);
       }
     })();
   }, []);
 
   useEffect(() => {
     AsyncStorage.setItem("currency", currency).catch((error) =>
-      console.error("Erro ao salvar moeda:", error)
+      console.error("Error saving currency:", error)
     );
   }, [currency]);
 

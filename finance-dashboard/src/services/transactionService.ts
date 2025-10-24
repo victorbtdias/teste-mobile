@@ -14,7 +14,7 @@ export const transactionService = {
 
       return transactions;
     } catch (error) {
-      console.error("Erro ao buscar transações:", error);
+      console.error("Error fetching transactions:", error);
       throw error;
     }
   },

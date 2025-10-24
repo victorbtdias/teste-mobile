@@ -9,7 +9,7 @@ export const userService = {
       const docSnap = await getDoc(docRef);
 
       if (!docSnap.exists()) {
-        console.warn(`Usuário com id ${id} não encontrado.`);
+        console.warn(`User with id ${id} not found`);
         return undefined;
       }
 
@@ -17,7 +17,7 @@ export const userService = {
 
       return user;
     } catch (error) {
-      console.error("Erro ao buscar usuário:", error);
+      console.error("Error fetching user:", error);
       throw error;
     }
   },

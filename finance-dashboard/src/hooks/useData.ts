@@ -31,7 +31,7 @@ export function useData() {
       setCategories(categoryRes);
       setUser(userRes);
     } catch (error) {
-      console.error("Erro ao carregar dados:", error);
+      console.error("Error loading data:", error);
     } finally {
       setLoading(false);
     }
