@@ -1,6 +1,9 @@
 # Dashboard de finanças
 
-Aplicativo mobile de finanças pessoais desenvolvido com React Native (Expo) para gerenciamento de contas, transações, e acompanhamento visual de entradas e saídas. Inclui modo escuro/claro, controle de visibilidade de valores, alternância de moeda (Real / Dólar), cadastro de transaçãoes (para utilizar o gerenciador de formulários Formik) e integração com Firebase Firestore para persistência dos dados.
+- Aplicativo mobile de finanças pessoais desenvolvido com React Native (Expo) para gerenciamento de contas, transações, e acompanhamento visual de entradas e saídas.
+- Inclui modo escuro/claro, controle de visibilidade de valores e alternância de moeda (Real / Dólar) gerenciados por Context API com persistência local utilizando AsyncStorage.
+- Cadastro de transaçãoes para utilizar o gerenciador de formulários Formik, conforme o requisito.
+- Integração com Firebase Firestore para persistência dos dados, facilitando execução local e evidando mocks.
 
 ## Funcionalidades
 
