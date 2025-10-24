@@ -10,6 +10,7 @@ import { ThemeProvider, useThemeContext } from "./contexts/ThemeContext";
 import { useTheme } from "styled-components/native";
 import { ValuesVisibilityProvider } from "./contexts/ValuesVisibilityContext";
 import { CurrencyProvider } from "./contexts/CurrencyContext";
+import ErrorBoundary from "./components/Error";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -48,12 +49,14 @@ function AppContent() {
 
 export function App() {
   return (
-    <ThemeProvider>
-      <ValuesVisibilityProvider>
-        <CurrencyProvider>
-          <AppContent />
-        </CurrencyProvider>
-      </ValuesVisibilityProvider>
-    </ThemeProvider>
+    <ErrorBoundary>
+      <ThemeProvider>
+        <ValuesVisibilityProvider>
+          <CurrencyProvider>
+            <AppContent />
+          </CurrencyProvider>
+        </ValuesVisibilityProvider>
+      </ThemeProvider>
+    </ErrorBoundary>
   );
 }
