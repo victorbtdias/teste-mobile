@@ -1,6 +1,6 @@
-import { transactions } from "../mock/transactions";
+import { Transaction } from "../types/Transaction";
 
-export function calculateBalanceGrowth(): number {
+export function calculateBalanceGrowth(transactions: Transaction[]): number {
   if (!transactions.length) return 0;
 
   const now = new Date();

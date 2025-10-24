@@ -7,7 +7,6 @@ import { getTotalBalance } from "../../../utils/calculateAccountBalance";
 import { calculateBalanceGrowth } from "../../../utils/calculateBalanceGrowth";
 import { getGreeting } from "../../../utils/getGreeting";
 import { formatCurrency } from "../../../utils/formatCurrency";
-import { user } from "../../../mock/user";
 import {
   BalanceAmount,
   BalanceCard,
@@ -19,22 +18,30 @@ import {
   HomeHeaderContainer,
   UserName,
 } from "./styled";
+import { useData } from "../../../hooks/useData";
 
 export function HomeHeader() {
   const theme = useTheme();
   const { showValues, toggleValuesVisibility } = useValuesVisibility();
   const { currency } = useCurrency();
+  const { accounts, transactions, categories, user } = useData();
 
-  const totalBalance = useMemo(() => getTotalBalance(), []);
+  const totalBalance = useMemo(
+    () => getTotalBalance(accounts, transactions, categories),
+    [accounts, transactions, categories]
+  );
 
-  const growth = useMemo(() => calculateBalanceGrowth(), []);
+  const growth = useMemo(
+    () => calculateBalanceGrowth(transactions),
+    [transactions]
+  );
 
   const greeting = getGreeting();
 
   return (
     <HomeHeaderContainer>
       <GreetingText>{greeting}</GreetingText>
-      <UserName>{user.name}</UserName>
+      <UserName>{user?.name}</UserName>
       <BalanceCard>
         <BalanceTop>
           <BalanceLabel>Total Balance</BalanceLabel>

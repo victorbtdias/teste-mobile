@@ -1,8 +1,12 @@
-import { accounts } from "../mock/accounts";
-import { transactions } from "../mock/transactions";
-import { categories } from "../mock/categories";
+import { Account } from "../types/Account";
+import { Category } from "../types/Category";
+import { Transaction } from "../types/Transaction";
 
-export function getAccountBalances() {
+export function getAccountBalances(
+  accounts: Account[],
+  transactions: Transaction[],
+  categories: Category[]
+) {
   return accounts.map((account) => {
     const accountTransactions = transactions.filter(
       (t) => t.accountId === account.id
@@ -25,7 +29,11 @@ export function getAccountBalances() {
   });
 }
 
-export function getTotalBalance() {
-  const balances = getAccountBalances();
+export function getTotalBalance(
+  accounts: Account[],
+  transactions: Transaction[],
+  categories: Category[]
+) {
+  const balances = getAccountBalances(accounts, transactions, categories);
   return balances.reduce((acc, a) => acc + a.balance, 0);
 }

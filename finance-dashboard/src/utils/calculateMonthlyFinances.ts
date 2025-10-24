@@ -1,5 +1,5 @@
-import { transactions } from "../mock/transactions";
-import { categories } from "../mock/categories";
+import { Category } from "../types/Category";
+import { Transaction } from "../types/Transaction";
 
 export interface MonthlyFinance {
   month: string;
@@ -10,6 +10,8 @@ export interface MonthlyFinance {
 const USD_TO_BRL = 5.39; //Foi considerado a cotação do dólar no dia 23/10. Em um caso real, eu utilizaria uma api para conversão de moedas.
 
 export function calculateMonthlyFinances(
+  transactions: Transaction[],
+  categories: Category[],
   currency: "USD" | "BRL"
 ): MonthlyFinance[] {
   const grouped: Record<string, { income: number; expense: number }> = {};

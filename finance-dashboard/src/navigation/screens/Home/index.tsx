@@ -4,24 +4,33 @@ import { calculateMonthlyFinances } from "../../../utils/calculateMonthlyFinance
 import { transformChartData } from "../../../utils/transformChartData";
 import { getAccountBalances } from "../../../utils/calculateAccountBalance";
 import { getRecentTransactions } from "../../../utils/getRecentTransactions";
-import { categories } from "../../../mock/categories";
 import { useCurrency } from "../../../contexts/CurrencyContext";
 import { formatCurrency } from "../../../utils/formatCurrency";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { HomeHeader } from "../../../components/Header/Home";
 import { InfoCard } from "../../../components/common/InfoCard";
 import { IncomeExpenseChart } from "../../../components/Chart/IncomeExpense";
 import { HomeContainer, SectionContainer, SectionTitle } from "./styled";
+import { useData } from "../../../hooks/useData";
+import Loader from "../../../components/common/Loader";
+import NotFound from "../../../components/common/NotFound";
+import { RefreshControl } from "react-native";
 
 export function Home() {
   const theme = useTheme();
   const { currency } = useCurrency();
+  const { accounts, transactions, categories, loading, reload } = useData();
 
-  const accounts = useMemo(() => getAccountBalances(), []);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const accountsData = useMemo(
+    () => getAccountBalances(accounts, transactions, categories),
+    [accounts, transactions, categories]
+  );
 
   const monthlyFinances = useMemo(
-    () => calculateMonthlyFinances(currency),
-    [currency]
+    () => calculateMonthlyFinances(transactions, categories, currency),
+    [transactions, categories, currency]
   );
 
   const chartData = useMemo(
@@ -29,7 +38,7 @@ export function Home() {
     [monthlyFinances]
   );
 
-  const recentTransactions = getRecentTransactions();
+  const recentTransactions = getRecentTransactions(transactions);
 
   const maxTransactionValue = useMemo(() => {
     return Math.max(
@@ -37,64 +46,90 @@ export function Home() {
     );
   }, [monthlyFinances]);
 
+  if (loading) {
+    return <Loader />;
+  }
+
   return (
-    <HomeContainer>
+    <HomeContainer
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={async () => {
+            setRefreshing(true);
+            await reload();
+            setRefreshing(false);
+          }}
+        />
+      }
+    >
       <HomeHeader />
 
       <SectionContainer>
         <SectionTitle>Accounts</SectionTitle>
-        {accounts.map((account) => (
-          <InfoCard
-            key={account.id}
-            title={account.name}
-            complement={account.accountNumber}
-            value={`${account.balance < 0 ? "-" : ""}${formatCurrency(
-              Math.abs(account.balance),
-              currency
-            )}`}
-            icon={account.icon}
-            iconColor={account.iconColor}
-            iconBg={account.iconBg}
-            valueColor={theme.colors.primaryText}
-          />
-        ))}
+
+        {accountsData.length > 0 ? (
+          accountsData.map((account) => (
+            <InfoCard
+              key={account.id}
+              title={account.name}
+              complement={account.accountNumber}
+              value={`${account.balance < 0 ? "-" : ""}${formatCurrency(
+                Math.abs(account.balance),
+                currency
+              )}`}
+              icon={account.icon}
+              iconColor={account.iconColor}
+              iconBg={account.iconBg}
+              valueColor={theme.colors.primaryText}
+            />
+          ))
+        ) : (
+          <NotFound text="No accounts found" />
+        )}
       </SectionContainer>
 
-      <IncomeExpenseChart
-        data={chartData}
-        maxValue={maxTransactionValue}
-        title="Income vs Expenses"
-        periodLabel="This M..."
-      />
+      {transactions.length > 0 && (
+        <IncomeExpenseChart
+          data={chartData}
+          maxValue={maxTransactionValue}
+          title="Income vs Expenses"
+          periodLabel="This M..."
+        />
+      )}
 
       <SectionContainer>
         <SectionTitle>Recent Transactions</SectionTitle>
 
-        {recentTransactions.map((transaction) => {
-          const category = categories.find(
-            (c) => c.id === transaction.categoryId
-          );
+        {recentTransactions.length > 0 ? (
+          recentTransactions.map((transaction) => {
+            const category = categories.find(
+              (c) => c.id === transaction.categoryId
+            );
 
-          if (!category) return null;
+            if (!category) return null;
 
-          const isIncome = category.type === "income";
+            const isIncome = category.type === "income";
 
-          return (
-            <InfoCard
-              key={transaction.id}
-              title={transaction.description}
-              complement={formatTransactionDate(transaction.date)}
-              value={`${isIncome ? "+" : "-"}${formatCurrency(
-                Math.abs(transaction.amount),
-                currency
-              )}`}
-              icon={category.icon}
-              iconColor={category.iconColor}
-              iconBg={category.iconBg}
-              valueColor={isIncome ? "#16A34A" : "#DC2626"}
-            />
-          );
-        })}
+            return (
+              <InfoCard
+                key={transaction.id}
+                title={transaction.description}
+                complement={formatTransactionDate(transaction.date)}
+                value={`${isIncome ? "+" : "-"}${formatCurrency(
+                  Math.abs(transaction.amount),
+                  currency
+                )}`}
+                icon={category.icon}
+                iconColor={category.iconColor}
+                iconBg={category.iconBg}
+                valueColor={isIncome ? "#16A34A" : "#DC2626"}
+              />
+            );
+          })
+        ) : (
+          <NotFound text="No transactions found" />
+        )}
       </SectionContainer>
     </HomeContainer>
   );

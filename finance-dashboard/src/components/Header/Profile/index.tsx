@@ -8,7 +8,7 @@ import {
 const userImage = require("../../../../assets/user.png");
 
 interface HeaderProps {
-  name: string;
+  name?: string;
 }
 
 export function ProfileHeader({ name }: HeaderProps) {
