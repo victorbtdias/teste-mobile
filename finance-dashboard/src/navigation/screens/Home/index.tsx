@@ -6,7 +6,7 @@ import { getAccountBalances } from "../../../utils/calculateAccountBalance";
 import { getRecentTransactions } from "../../../utils/getRecentTransactions";
 import { useCurrency } from "../../../contexts/CurrencyContext";
 import { formatCurrency } from "../../../utils/formatCurrency";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { HomeHeader } from "../../../components/Header/Home";
 import { InfoCard } from "../../../components/common/InfoCard";
 import { IncomeExpenseChart } from "../../../components/Chart/IncomeExpense";
@@ -15,8 +15,11 @@ import { useData } from "../../../hooks/useData";
 import Loader from "../../../components/common/Loader";
 import NotFound from "../../../components/common/NotFound";
 import { RefreshControl } from "react-native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { PrimaryButton } from "../../../components/common/Button";
 
 export function Home() {
+  const navigation = useNavigation();
   const theme = useTheme();
   const { currency } = useCurrency();
   const { accounts, transactions, categories, loading, reload } = useData();
@@ -45,6 +48,12 @@ export function Home() {
       ...monthlyFinances.map((item) => Math.max(item.income, item.expense))
     );
   }, [monthlyFinances]);
+
+  useFocusEffect(
+    useCallback(() => {
+      reload();
+    }, [])
+  );
 
   if (loading) {
     return <Loader />;
@@ -130,6 +139,10 @@ export function Home() {
         ) : (
           <NotFound text="No transactions found" />
         )}
+        <PrimaryButton
+          label="Add Transaction"
+          onPress={() => navigation.navigate("Register")}
+        />
       </SectionContainer>
     </HomeContainer>
   );

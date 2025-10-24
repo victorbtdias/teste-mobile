@@ -1,5 +1,5 @@
 import { db } from "../firebase";
-import { collection, getDocs } from "firebase/firestore";
+import { addDoc, collection, getDocs } from "firebase/firestore";
 import { Transaction } from "../types/Transaction";
 
 export const transactionService = {
@@ -15,6 +15,17 @@ export const transactionService = {
       return transactions;
     } catch (error) {
       console.error("Error fetching transactions:", error);
+      throw error;
+    }
+  },
+
+  create: async (data: Transaction) => {
+    try {
+      const docRef = await addDoc(collection(db, "transactions"), data);
+
+      return docRef;
+    } catch (error) {
+      console.error("Error saving transaction:", error);
       throw error;
     }
   },

@@ -9,6 +9,8 @@ import { Profile } from "./screens/Profile";
 import { Entypo, Ionicons } from "@expo/vector-icons";
 import { useTheme } from "styled-components/native";
 import { useThemeContext } from "../contexts/ThemeContext";
+import { Register } from "./screens/Register";
+import { HeaderButton, Text } from "@react-navigation/elements";
 
 const Tab = createBottomTabNavigator();
 
@@ -72,6 +74,18 @@ const RootStack = createNativeStackNavigator({
     HomeTabs: {
       screen: TabNavigator,
       options: { headerShown: false },
+    },
+    Register: {
+      screen: Register,
+      options: ({ navigation }) => ({
+        title: "Add Transaction",
+        presentation: "modal",
+        headerRight: () => (
+          <HeaderButton onPress={navigation.goBack}>
+            <Text>Close</Text>
+          </HeaderButton>
+        ),
+      }),
     },
   },
 });
