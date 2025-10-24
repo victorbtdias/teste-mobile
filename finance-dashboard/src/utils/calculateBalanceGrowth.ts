@@ -1,5 +1,7 @@
 import { Transaction } from "../types/Transaction";
 
+//Calcula a porcentagem de crescimento ou queda do saldo entre o mês atual e o mês anterior
+
 export function calculateBalanceGrowth(transactions: Transaction[]): number {
   if (!transactions.length) return 0;
 

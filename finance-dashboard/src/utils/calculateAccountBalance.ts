@@ -2,6 +2,8 @@ import { Account } from "../types/Account";
 import { Category } from "../types/Category";
 import { Transaction } from "../types/Transaction";
 
+//Calcula o saldo de cada conta individualmente
+
 export function getAccountBalances(
   accounts: Account[],
   transactions: Transaction[],
@@ -28,6 +30,8 @@ export function getAccountBalances(
     };
   });
 }
+
+//Calcula o saldo total somando os saldos individuais das contas
 
 export function getTotalBalance(
   accounts: Account[],

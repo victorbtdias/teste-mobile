@@ -8,6 +8,8 @@ export interface ChartItem {
   spacing?: number;
 }
 
+// Converte os dados financeiros mensais para o formato aceito pela biblioteca react-native-gifted-charts
+
 export function transformChartData(data: MonthlyFinance[]): ChartItem[] {
   const chartData: ChartItem[] = [];
 
